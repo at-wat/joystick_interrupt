@@ -44,7 +44,8 @@ private:
   double linear_vel_;
   double angular_vel_;
   double timeout_;
-  double high_speed_ratio_;
+  double linear_high_speed_ratio_;
+  double angular_high_speed_ratio_;
   int linear_axis_;
   int angular_axis_;
   int linear_axis2_;
@@ -81,8 +82,8 @@ private:
       {
         if (msg->buttons[high_speed_button_])
         {
-          lin *= high_speed_ratio_;
-          ang *= high_speed_ratio_;
+          lin *= linear_high_speed_ratio_;
+          ang *= angular_high_speed_ratio_;
         }
       }
 
@@ -131,7 +132,8 @@ public:
     pnh_.param("angular_axis2", angular_axis2_, -1);
     pnh_.param("interrupt_button", interrupt_button_, 6);
     pnh_.param("high_speed_button", high_speed_button_, 4);
-    pnh_.param("high_speed_ratio", high_speed_ratio_, 1.5);
+    pnh_.param("linear_high_speed_ratio", linear_high_speed_ratio_, 1.3);
+    pnh_.param("angular_high_speed_ratio", angular_high_speed_ratio_, 1.1);
     pnh_.param("timeout", timeout_, 0.5);
     last_joy_msg_ = ros::Time(0);
   }
