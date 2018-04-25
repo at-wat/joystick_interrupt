@@ -131,7 +131,7 @@ public:
     pnh_.param("linear_axis2", linear_axis2_, -1);
     pnh_.param("angular_axis2", angular_axis2_, -1);
     pnh_.param("interrupt_button", interrupt_button_, 6);
-    pnh_.param("high_speed_button", high_speed_button_, 4);
+    pnh_.param("high_speed_button", high_speed_button_, -1);
     pnh_.param("linear_high_speed_ratio", linear_high_speed_ratio_, 1.3);
     pnh_.param("angular_high_speed_ratio", angular_high_speed_ratio_, 1.1);
     pnh_.param("timeout", timeout_, 0.5);
