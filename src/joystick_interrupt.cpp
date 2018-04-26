@@ -58,7 +58,7 @@ private:
   {
     if (!rangeCheck(msg->buttons, interrupt_button_))
     {
-      ROS_ERROR("Out of Range error: buttons size: %lu <= interrupt_button_: %d",
+      ROS_ERROR("Out of range: number of buttons (%lu) must be greater than interrupt_button (%d)",
                 msg->buttons.size(), interrupt_button_);
       last_joy_msg_ = ros::Time(0);
       return;
@@ -76,13 +76,13 @@ private:
     if (rangeCheck<float>(msg->axes, linear_axis_))
       lin = msg->axes[linear_axis_];
     else
-      ROS_ERROR("Out of range error: axes size: %lu <= linear_axis: %d", msg->axes.size(), linear_axis_);
+      ROS_ERROR("Out of range: number of axis (%lu) must be greater than linear_axis (%d)", msg->axes.size(), linear_axis_);
     if (rangeCheck<float>(msg->axes, angular_axis_))
       ang = msg->axes[angular_axis_];
     else
-      ROS_ERROR("Out of range error: axes size: %lu <= angular_axis: %d", msg->axes.size(), angular_axis_);
+      ROS_ERROR("Out of range: number of axis (%lu) must be greater than angular_axis (%d)", msg->axes.size(), angular_axis_);
 
-    if (isEnabled(linear_axis2_))
+    if (linear_axis2_ >= 0)
     {
       if (rangeCheck<float>(msg->axes, linear_axis2_))
       {
@@ -90,9 +90,9 @@ private:
           lin = msg->axes[linear_axis2_];
       }
       else
-        ROS_ERROR("Out of range error: axes size: %lu <= linear_axis2: %d", msg->axes.size(), linear_axis2_);
+        ROS_ERROR("Out of range: number of axis (%lu) must be greater than linear_axis2 (%d)", msg->axes.size(), linear_axis2_);
     }
-    if (isEnabled(angular_axis2_))
+    if (angular_axis2_ >= 0)
     {
       if (rangeCheck<float>(msg->axes, angular_axis2_))
       {
@@ -100,10 +100,10 @@ private:
           ang = msg->axes[angular_axis2_];
       }
       else
-        ROS_ERROR("Out of range error: axes size: %lu <= angular_axis2: %d", msg->axes.size(), angular_axis2_);
+        ROS_ERROR("Out of range: number of axis (%lu) must be greater than angular_axis2 (%d)", msg->axes.size(), angular_axis2_);
     }
 
-    if (isEnabled(high_speed_button_))
+    if (high_speed_button_ >= 0)
     {
       if (rangeCheck<int>(msg->buttons, high_speed_button_))
       {
@@ -114,7 +114,7 @@ private:
         }
       }
       else
-        ROS_ERROR("Out of range error: buttons size: %lu <= high_speed_button: %d",
+        ROS_ERROR("Out of range: number of buttons (%lu) must be greater than high_speed_button (%d)",
                   msg->buttons.size(), high_speed_button_);
     }
 
@@ -139,10 +139,6 @@ private:
     }
     pub_int_.publish(status);
   };
-  static bool isEnabled(const int index)
-  {
-    return index >= 0;
-  }
   template <typename T>
   static bool rangeCheck(const std::vector<T>& array, const int index)
   {
@@ -172,21 +168,21 @@ public:
     pnh_.param("timeout", timeout_, 0.5);
     last_joy_msg_ = ros::Time(0);
 
-    if (!isEnabled(interrupt_button_))
+    if (interrupt_button_ < 0)
     {
-      ROS_ERROR("interrupt_button cannot be disabled(-1).");
+      ROS_ERROR("interrupt_button must be grater than -1.");
       ros::shutdown();
       return;
     }
-    if (!isEnabled(linear_axis_))
+    if (linear_axis_ < 0)
     {
-      ROS_ERROR("linear_axis cannot be disabled(-1).");
+      ROS_ERROR("linear_axis must be grater than -1.");
       ros::shutdown();
       return;
     }
-    if (!isEnabled(angular_axis_))
+    if (angular_axis_ < 0)
     {
-      ROS_ERROR("angular_axis cannot be disabled(-1).");
+      ROS_ERROR("angular_axis must be grater than -1.");
       ros::shutdown();
       return;
     }
