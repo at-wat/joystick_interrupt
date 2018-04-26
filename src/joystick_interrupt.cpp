@@ -58,7 +58,7 @@ private:
   {
     if (!rangeCheck(interrupt_button_, msg->buttons.size()))
     {
-      ROS_ERROR("Out of range: number of buttons (%lu) must be greater than interrupt_button (%d)",
+      ROS_ERROR("Out of range: number of buttons (%lu) must be greater than interrupt_button (%d).",
                 msg->buttons.size(), interrupt_button_);
       last_joy_msg_ = ros::Time(0);
       return;
@@ -76,11 +76,11 @@ private:
     if (rangeCheck(linear_axis_, msg->axes.size()))
       lin = msg->axes[linear_axis_];
     else
-      ROS_ERROR("Out of range: number of axis (%lu) must be greater than linear_axis (%d)", msg->axes.size(), linear_axis_);
+      ROS_ERROR("Out of range: number of axis (%lu) must be greater than linear_axis (%d).", msg->axes.size(), linear_axis_);
     if (rangeCheck(angular_axis_, msg->axes.size()))
       ang = msg->axes[angular_axis_];
     else
-      ROS_ERROR("Out of range: number of axis (%lu) must be greater than angular_axis (%d)", msg->axes.size(), angular_axis_);
+      ROS_ERROR("Out of range: number of axis (%lu) must be greater than angular_axis (%d).", msg->axes.size(), angular_axis_);
 
     if (linear_axis2_ >= 0)
     {
@@ -90,7 +90,7 @@ private:
           lin = msg->axes[linear_axis2_];
       }
       else
-        ROS_ERROR("Out of range: number of axis (%lu) must be greater than linear_axis2 (%d)", msg->axes.size(), linear_axis2_);
+        ROS_ERROR("Out of range: number of axis (%lu) must be greater than linear_axis2 (%d).", msg->axes.size(), linear_axis2_);
     }
     if (angular_axis2_ >= 0)
     {
@@ -100,7 +100,7 @@ private:
           ang = msg->axes[angular_axis2_];
       }
       else
-        ROS_ERROR("Out of range: number of axis (%lu) must be greater than angular_axis2 (%d)", msg->axes.size(), angular_axis2_);
+        ROS_ERROR("Out of range: number of axis (%lu) must be greater than angular_axis2 (%d).", msg->axes.size(), angular_axis2_);
     }
 
     if (high_speed_button_ >= 0)
@@ -114,7 +114,7 @@ private:
         }
       }
       else
-        ROS_ERROR("Out of range: number of buttons (%lu) must be greater than high_speed_button (%d)",
+        ROS_ERROR("Out of range: number of buttons (%lu) must be greater than high_speed_button (%d).",
                   msg->buttons.size(), high_speed_button_);
     }
 
