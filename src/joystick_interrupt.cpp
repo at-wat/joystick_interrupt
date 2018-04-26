@@ -68,7 +68,6 @@ private:
       last_joy_msg_ = ros::Time(0);
       return;
     }
-    ROS_INFO_STREAM(msg->buttons[interrupt_button_]);
 
     last_joy_msg_ = ros::Time::now();
 
