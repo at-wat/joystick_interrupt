@@ -56,29 +56,57 @@ private:
 
   void cbJoy(const sensor_msgs::Joy::Ptr msg)
   {
-    if (msg->buttons[interrupt_button_])
+    if (!rangeCheck(msg->buttons, interrupt_button_))
     {
-      last_joy_msg_ = ros::Time::now();
+      ROS_ERROR("Out of Range error: buttons size: %lu <= interrupt_button_: %d",
+                msg->buttons.size(), interrupt_button_);
+      last_joy_msg_ = ros::Time(0);
+      return;
+    }
+    if (!msg->buttons[interrupt_button_])
+    {
+      last_joy_msg_ = ros::Time(0);
+      return;
+    }
+    ROS_INFO_STREAM(msg->buttons[interrupt_button_]);
 
-      float lin, ang;
+    last_joy_msg_ = ros::Time::now();
+
+    float lin(0.0f);
+    float ang(0.0f);
+    if (rangeCheck<float>(msg->axes, linear_axis_))
       lin = msg->axes[linear_axis_];
+    else
+      ROS_ERROR("Out of range error: axes size: %lu <= linear_axis: %d", msg->axes.size(), linear_axis_);
+    if (rangeCheck<float>(msg->axes, angular_axis_))
       ang = msg->axes[angular_axis_];
-      if (linear_axis2_ >= 0)
+    else
+      ROS_ERROR("Out of range error: axes size: %lu <= angular_axis: %d", msg->axes.size(), angular_axis_);
+
+    if (isEnabled(linear_axis2_))
+    {
+      if (rangeCheck<float>(msg->axes, linear_axis2_))
       {
         if (fabs(msg->axes[linear_axis2_]) > fabs(lin))
-        {
           lin = msg->axes[linear_axis2_];
-        }
       }
-      if (angular_axis2_ >= 0)
+      else
+        ROS_ERROR("Out of range error: axes size: %lu <= linear_axis2: %d", msg->axes.size(), linear_axis2_);
+    }
+    if (isEnabled(angular_axis2_))
+    {
+      if (rangeCheck<float>(msg->axes, angular_axis2_))
       {
-        if (fabs(msg->axes[angular_axis2_]) > fabs(lin))
-        {
+        if (fabs(msg->axes[angular_axis2_]) > fabs(ang))
           ang = msg->axes[angular_axis2_];
-        }
       }
+      else
+        ROS_ERROR("Out of range error: axes size: %lu <= angular_axis2: %d", msg->axes.size(), angular_axis2_);
+    }
 
-      if (high_speed_button_ >= 0)
+    if (isEnabled(high_speed_button_))
+    {
+      if (rangeCheck<int>(msg->buttons, high_speed_button_))
       {
         if (msg->buttons[high_speed_button_])
         {
@@ -86,18 +114,17 @@ private:
           ang *= angular_high_speed_ratio_;
         }
       }
+      else
+        ROS_ERROR("Out of range error: buttons size: %lu <= high_speed_button: %d",
+                  msg->buttons.size(), high_speed_button_);
+    }
 
-      geometry_msgs::Twist cmd_vel;
-      cmd_vel.linear.x = lin * linear_vel_;
-      cmd_vel.linear.y = cmd_vel.linear.z = 0.0;
-      cmd_vel.angular.z = ang * angular_vel_;
-      cmd_vel.angular.x = cmd_vel.angular.y = 0.0;
-      pub_twist_.publish(cmd_vel);
-    }
-    else
-    {
-      last_joy_msg_ = ros::Time(0);
-    }
+    geometry_msgs::Twist cmd_vel;
+    cmd_vel.linear.x = lin * linear_vel_;
+    cmd_vel.linear.y = cmd_vel.linear.z = 0.0;
+    cmd_vel.angular.z = ang * angular_vel_;
+    cmd_vel.angular.x = cmd_vel.angular.y = 0.0;
+    pub_twist_.publish(cmd_vel);
   };
   void cbTwist(const geometry_msgs::Twist::Ptr msg)
   {
@@ -113,6 +140,15 @@ private:
     }
     pub_int_.publish(status);
   };
+  static bool isEnabled(const int index)
+  {
+    return index >= 0;
+  }
+  template <typename T>
+  static bool rangeCheck(const std::vector<T>& array, const int index)
+  {
+    return index < array.size();
+  }
 
 public:
   JoystickInterrupt()
@@ -136,6 +172,25 @@ public:
     pnh_.param("angular_high_speed_ratio", angular_high_speed_ratio_, 1.1);
     pnh_.param("timeout", timeout_, 0.5);
     last_joy_msg_ = ros::Time(0);
+
+    if (!isEnabled(interrupt_button_))
+    {
+      ROS_ERROR("interrupt_button cannot be disabled(-1).");
+      ros::shutdown();
+      return;
+    }
+    if (!isEnabled(linear_axis_))
+    {
+      ROS_ERROR("linear_axis cannot be disabled(-1).");
+      ros::shutdown();
+      return;
+    }
+    if (!isEnabled(angular_axis_))
+    {
+      ROS_ERROR("angular_axis cannot be disabled(-1).");
+      ros::shutdown();
+      return;
+    }
   }
 };
 
