@@ -56,7 +56,7 @@ private:
 
   void cbJoy(const sensor_msgs::Joy::Ptr msg)
   {
-    if (!rangeCheck(interrupt_button_, msg->buttons.size()))
+    if (static_cast<size_t>(interrupt_button_) >= msg->buttons.size())
     {
       ROS_ERROR("Out of range: number of buttons (%lu) must be greater than interrupt_button (%d).",
                 msg->buttons.size(), interrupt_button_);
@@ -73,12 +73,12 @@ private:
 
     float lin(0.0f);
     float ang(0.0f);
-    if (rangeCheck(linear_axis_, msg->axes.size()))
+    if (static_cast<size_t>(linear_axis_) < msg->axes.size())
       lin = msg->axes[linear_axis_];
     else
       ROS_ERROR("Out of range: number of axis (%lu) must be greater than linear_axis (%d).",
                 msg->axes.size(), linear_axis_);
-    if (rangeCheck(angular_axis_, msg->axes.size()))
+    if (static_cast<size_t>(angular_axis_) < msg->axes.size())
       ang = msg->axes[angular_axis_];
     else
       ROS_ERROR("Out of range: number of axis (%lu) must be greater than angular_axis (%d).",
@@ -86,7 +86,7 @@ private:
 
     if (linear_axis2_ >= 0)
     {
-      if (rangeCheck(linear_axis2_, msg->axes.size()))
+      if (static_cast<size_t>(linear_axis2_) < msg->axes.size())
       {
         if (fabs(msg->axes[linear_axis2_]) > fabs(lin))
           lin = msg->axes[linear_axis2_];
@@ -97,7 +97,7 @@ private:
     }
     if (angular_axis2_ >= 0)
     {
-      if (rangeCheck(angular_axis2_, msg->axes.size()))
+      if (static_cast<size_t>(angular_axis2_) < msg->axes.size())
       {
         if (fabs(msg->axes[angular_axis2_]) > fabs(ang))
           ang = msg->axes[angular_axis2_];
@@ -109,7 +109,7 @@ private:
 
     if (high_speed_button_ >= 0)
     {
-      if (rangeCheck(high_speed_button_, msg->buttons.size()))
+      if (static_cast<size_t>(high_speed_button_) < msg->buttons.size())
       {
         if (msg->buttons[high_speed_button_])
         {
@@ -143,10 +143,6 @@ private:
     }
     pub_int_.publish(status);
   };
-  static bool rangeCheck(const int index, const unsigned int range)
-  {
-    return index < range;
-  }
 
 public:
   JoystickInterrupt()
