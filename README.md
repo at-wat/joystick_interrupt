@@ -1,4 +1,6 @@
 joystick_interrupt
 ==================
 
-*This package has been absorbed into the neonavigation meta-package. Please clone https://github.com/at-wat/neonavigation/ instead.*
+**This package has been absorbed into the neonavigation meta-package.**
+
+Please clone https://github.com/at-wat/neonavigation/ instead.
