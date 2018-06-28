@@ -1,6 +1,9 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(joystick_interrupt)
 
+message(ERROR "'joystick_interrupt' package has been absorbed into the neonavigation meta-package.")
+message(ERROR "Please clone https://github.com/at-wat/neonavigation/ instead.")
+
 find_package(catkin REQUIRED
   COMPONENTS
     roscpp
